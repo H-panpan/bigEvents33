@@ -73,7 +73,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-center">
-                            <a href="#" class="btn btn-success" data-toggle="modal" data-target="#addModal">新增分类</a>
+                            <a href="#" class="btn btn-success btn-add" data-toggle="modal" data-target="#addModal">新增分类</a>
                         </td>
                     </tr>
                 </tfoot>
@@ -90,6 +90,7 @@
             </div>
             <div class="modal-body">
               <form>
+                  <input type="hidden" name="id">
                 <div class="form-group">
                   <label for="recipient-name" class="control-label">分类名称:</label>
                   <input type="text" class="form-control" name="name">
@@ -113,8 +114,8 @@
         <td>{{$value.name}}</td>
         <td>{{$value.slug}}</td>
         <td class="text-center">
-            <a href="javascript:editTr({&quot;id&quot;:&quot;1&quot;,&quot;slug&quot;:&quot;uncategorized&quot;,&quot;name&quot;:&quot;未分类&quot;});" class="btn btn-info btn-xs">编辑</a>
-            <a href="javascript:deleteTr( 1 );" class="btn btn-danger btn-xs">删除</a>
+            <a href='javascript:editTr({"id":"{{$value.id}}","slug":"{{$value.slug}}","name":"{{$value.name}}"});' class="btn btn-info btn-xs">编辑</a>
+            <a href="javascript:deleteTr( {{$value.id}});" class="btn btn-danger btn-xs">删除</a>
         </td>
     </tr>
     {{/each}}
@@ -128,15 +129,9 @@
           $('#model_shutoff').click(function(){
             alert('shutoff');
             $('#addModal').modal('hide');
-          });
+        })
 
-         
-          $('.category_table').delegate('a','click',function(){
-              if($(this).hasClass('btn-info')){
-                $('#addModal .modal-title').html('修改分类名称');
-                $('#addModal').modal('show');
-              }
-          })      
+              
       </script>
 
       <script>
@@ -155,9 +150,49 @@
          }
         });
     }
+    window.editTr = function(data){
+       for(const key in data){
+           $('input[name='+key+']').val(data[key])
+       };
+    console.log(data);
+    
+    };
+    window.deleteTr = function(id){
+        $.ajax({
+                  url:'http://localhost:8000/admin/category_delete',
+                  type:'post',
+                  data:{
+                      id:id
+                  },
+                  success:function(backData){
+                     console.log(backData);
+                     if(backData.code==200){
+                        getCategory();
+                     }
+                     
+                  }
+              })
+           
+    }
+
     getCategory()
+
      $('#model_add').click(function(){
-         $.ajax({
+         if($(this).hasClass('btn-success')){
+     $.ajax({
+         url:'http://localhost:8000/admin/category_edit',
+         type:'post',
+         data:$('form').serialize(),
+         success:function(backData){
+             console.log(backData);
+             getCategory();
+             
+
+         }
+     })
+
+         }else{
+            $.ajax({
              url:'http://localhost:8000/admin/category_add',
              type:'post',
              data:$('form').serialize(),
@@ -168,12 +203,32 @@
              }
 
          });
+         }
+        
          $('#addModal').modal('hide');
             
           });
 
 
-      })
+       
+
+
+//   区分新增和修改编辑分类
+$('.btn-add').click(function(){
+   $('.modal-title').text('新增分类');
+   $('#model_add').text('新增').removeClass('btn-success');
+
+})
+
+
+$('.category_table').on('click','a.btn-info',function(){
+              
+                $('#addModal .modal-title').html('修改分类名称');
+                $('#model_add').text('修改').addClass('btn-success');
+                $('#addModal').modal('show');
+            })
+
+})
       
       
       </script>
