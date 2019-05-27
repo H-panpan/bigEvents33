@@ -121,31 +121,29 @@
         }
 
     </script>
-
-</body>
-</html>
-<script>
-    $(function(){
-        $('.icon-tuichu').click(function(){
-           $('.modal-logout').modal();
-          
-});
-$('.btn-logout').click(function(){
-    $.ajax({
-         url:"http://localhost:8000/admin/logout",
-         type:"post",
-         success:function(backData){
-             console.log(backData);
-             if(backData.code==200){
-                 window.location.href='./login.html';
-             }
-         }
-    });
-})
-
- // 获取用户信息
- $.ajax({
-            url:'http://localhost:8000/admin/getuser',
+    <!-- 自己的逻辑 -->
+    <script>
+    //   登入登出功能
+            $(function(){
+                $('.icon-tuichu').click(function(){
+                   $('.modal-logout').modal();
+                  
+        });
+        $('.btn-logout').click(function(){
+            $.ajax({
+                 url:"https://autumnfish.cn/big/admin/logout",
+                 type:"post",
+                 success:function(backData){
+                     console.log(backData);
+                     if(backData.code==200){
+                         window.location.href='./login.html';
+                     }
+                 }
+            });
+        })
+        // 获取用户信息
+        $.ajax({
+            url:'https://autumnfish.cn/big/admin/getuser',
             type:'get',
             success:function(backData){
               console.log(backData);
@@ -155,8 +153,12 @@ $('.btn-logout').click(function(){
               $('.user_center_link img').attr('src',backData.data.user_pic);
             }
         })
-    })
+        
+            })
+        
+        
+        
+        </script>
 
-
-
-</script>
+</body>
+</html>
