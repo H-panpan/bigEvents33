@@ -178,6 +178,7 @@
     getCategory()
 
      $('#model_add').click(function(){
+
          if($(this).hasClass('btn-success')){
      $.ajax({
          url:'http://localhost:8000/admin/category_edit',
@@ -217,6 +218,7 @@
 $('.btn-add').click(function(){
    $('.modal-title').text('新增分类');
    $('#model_add').text('新增').removeClass('btn-success');
+   $('form input').val('')
 
 })
 
