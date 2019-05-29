@@ -215,11 +215,76 @@
             <span>|</span>
             <a href="#">招聘人才</a>
             <span>|</span>
-            <a href="#">友情链接</a>		
+            <a href="#">友情链接</a>
         </div>
-        <p>CopyRight © 2019 深圳大事件信息技术股份有限公司   All Rights Reserved</p>
-        <p>电话：0755-****888    粤ICP备*******8号</p>
+        <p>CopyRight © 2019 深圳大事件信息技术股份有限公司 All Rights Reserved</p>
+        <p>电话：0755-****888 粤ICP备*******8号</p>
     </div>
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./js/template-web.js"></script>
+    
+    <!-- 顶部文章渲染 -->
+    <script id='article' type="text/html">
+    
+        {{each data}}
+        {{if $index==0}}
+        <li class="first">
+            {{else}}
+            <li>
+                {{/if}}
+        
+                <a href="./article.html?id={{$value.id}}"><img src="{{$value.cover}}" alt=""></a>
+                <p>{{$value.title}}</p>
+            </li>
+     {{/each}}
+    </script>
+    <!-- 底部文章渲染 -->
+    <script id='message' type="text/html">
+        {{each data}}
+        <div class="common_news_list">
+                <a href="#" class="list_pic"><img src="{{$value.cover}}" alt=""></a>
+                <h4><a href="#">{{$value.title}}</a></h4>
+                <p>{{@$value.content}}
+                </p>
+                <div class="new_info">
+                    <span>标签：{{$value.type}}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i class="fa fa-eye"></i>&nbsp;阅读( {{$value.read}}
+                        )&nbsp;&nbsp;&nbsp;<i class="fa fa-commenting"></i>&nbsp;评论( {{$value.comment}} )</span>
+                    <b>发布于 {{$value.date}}</b>
+                </div>
+            </div>
+            {{/each}}
+    </script>
+    <script>
+        $(function () {
+
+            $.ajax({
+
+                url: 'http://localhost:8000/admin/search',
+                type: 'get',
+                data: {
+                    perpage: 5,
+                    page: 1,
+                },
+                success: function (backData) {
+                    console.log(backData);
+                    var html = template('article',backData);
+                    $('.focus_list').html(html);
+                    var buttomHtml = template('message',backData);
+                    $('.common_news_list').remove()
+                    $('.left_con').append(buttomHtml)
+
+
+                }
+
+
+            })
+
+
+
+        })
+
+
+    </script>
 
 </body>
 
