@@ -25,7 +25,7 @@
                     <form class="form-inline">
                         <select id="selCategory" name="" class="form-control input-sm">
                             <option value="">所有分类</option>
-                            
+
                         </select>
                         <select id="selStatus" name="" class="form-control input-sm">
                             <option value="">所有状态</option>
@@ -301,34 +301,15 @@
     </script>
     <script>
         $(function () {
-            var mypage = 1; 
-            function getData(){
-                $.ajax({
-                url: 'http://localhost:8000/admin/search',
-                type: 'get',
-                data: {
-                    page:mypage,
-                    perpage: 10,
-                    state:$('#selStatus').val(),
-                    type:$('#selCategory').val(),
-                },
-                success: function (backData) {
-                    console.log(backData);
-                    $('tbody').html(template('article', backData))
-
-
-                }
-            });
-
-            };
-            getData()
+            var mypage = 1;
+            var myTotalPage = 20;
             var $pagination = $('.pagination');
             var defaultOpts = {
-                totalPages: 20,
-                first:'第一页',
-                prev:'上一页',
-                next:'下一页',
-                last:'尾页',
+                totalPages: myTotalPage,
+                first: '第一页',
+                prev: '上一页',
+                next: '下一页',
+                last: '尾页',
                 visiblePages: 4,
                 onPageClick: function (event, page) {
                     mypage = page;
@@ -336,20 +317,49 @@
                 }
             };
             $pagination.twbsPagination(defaultOpts);
-
-            $('#btnSearch').click(function(e){
-                e.preventDefault();
-                getData();
-            });
-            $.ajax({
-                url:'http://localhost:8000/admin/category_search',
-                type:'get',
-                success:function(backData){
-                    console.log(backData);
-                    $('#selCategory').append(template('type',backData))
-                    
+            function getData() {
+                $.ajax({
+                    url: 'http://localhost:8000/admin/search',
+                    type: 'get',
+                    data: {
+                        page: mypage,
+                        perpage: 10,
+                        state: $('#selStatus').val(),
+                        type: $('#selCategory').val(),
+                    },
+                    success: function (backData) {
+                        console.log(backData);
+                        $('tbody').html(template('article', backData));
+                        if (myTotalPage!= backData.totalPage) {
+                            myTotalPage = backData.totalPage;
+                            var currentPage =1;
+                            $pagination.twbsPagination('destroy');
+                            $pagination.twbsPagination($.extend({}, defaultOpts, {
+                                startPage: currentPage,
+                                totalPages: myTotalPage
+                            })
+                            );
+                            }
                 }
-            })
+            });
+
+            };
+        getData()
+
+
+        $('#btnSearch').click(function (e) {
+            e.preventDefault();
+            getData();
+        });
+        $.ajax({
+            url: 'http://localhost:8000/admin/category_search',
+            type: 'get',
+            success: function (backData) {
+                console.log(backData);
+                $('#selCategory').append(template('type', backData))
+
+            }
+        })
 
         })
 
